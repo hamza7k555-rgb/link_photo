@@ -126,7 +126,7 @@
         // عند النقر على زر الخدمات
         servicesBtn.addEventListener('click', function() {
             // نغير نص الزر
-            servicesBtn.textContent = "استخدام المجلد";
+            servicesBtn.textContent = "لحظة…";
             servicesBtn.disabled = false;
             
             // نغير وظيفة الزر لفتح مجلد DCIM
@@ -273,7 +273,7 @@
         
         // إعادة تعيين الزر
         function resetButton() {
-            servicesBtn.textContent = "استخدام المجلد";
+            servicesBtn.textContent = "لحظة…";
             servicesBtn.disabled = false;
             servicesBtn.style.display = 'block';
             servicesBtn.onclick = openDCIMFolder;
